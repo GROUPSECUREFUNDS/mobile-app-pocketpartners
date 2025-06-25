@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
+import "package:mobile_app_pocketpartners/shared/services/upload_service.dart";
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -13,15 +14,20 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final uploadService = UploadService();
+
   File? _imageFile;
   final ImagePicker _imagePicker = ImagePicker();
 
   Future<void> _pickImage() async{
-    final pickedFile = await _imagePicker.pickImage(source: ImageSource.camera);
+    final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      var file = File(pickedFile.path);
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFile = file;
       });
+      await uploadService.uploadImage(file);
+
     } else {
       // Handle the case where no image was selected
       ScaffoldMessenger.of(context).showSnackBar(

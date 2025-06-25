@@ -14,6 +14,8 @@ dependencies:
   http: ^1.4.0
   shared_preferences: ^2.5.3
   image_picker: ^1.1.2
+  cloudinary_url_gen: ^1.0.0
+  cloudinary_api: ^1.0.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
