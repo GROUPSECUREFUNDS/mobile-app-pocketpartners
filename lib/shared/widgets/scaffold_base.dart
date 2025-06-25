@@ -143,7 +143,7 @@ class _State extends ConsumerState<ScaffoldBase> {
                 selected: currentPath == route.path,
                 onTap: () {
                   // Navigate to the selected route
-                  context.go(route.path);
+                  context.push(route.path);
                 },
               ),
             ),
@@ -153,7 +153,7 @@ class _State extends ConsumerState<ScaffoldBase> {
               title: const Text("Logout"),
               onTap: () {
                 authController.logout();
-                context.go("/auth/login");
+                context.go("/login");
               },
             ),
           ],

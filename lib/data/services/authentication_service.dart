@@ -33,13 +33,13 @@ class AuthenticationService extends BaseService {
     final response = await client.post(
       Uri.parse("${getFullUrl()}/sign-up"),
       headers: customHeaders,
-      body: registerRequest.toJson(),
+      body: jsonEncode(registerRequest.toJson()),
     );
 
     if (response.statusCode == 201) {
       return RegisterResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception("Failed to register");
+      throw Exception(response.statusCode);
     }
   }
 }

@@ -13,6 +13,10 @@ class AuthController {
 
   AuthController();
 
+  Future<LoginResponseModel?> getCurrentUser() async {
+    return await getUserFromPreferences();
+  }
+
 
   Future<LoginResponseModel?> getUserFromPreferences() {
     return SharedPreferences.getInstance().then((prefs) {
@@ -36,24 +40,19 @@ class AuthController {
     RegisterRequestModel registerRequest,
     UserinfoRequestModel userInfoRequest,
   ) async {
+
+    debugPrint("Ejecutando post de registerRequest: $registerRequest");
+
     final responseRegister = await _authenticationService.signUp(
       registerRequest,
     );
+    await login(
+        LoginRequestModel(
+          username: registerRequest.username,
+          password: registerRequest.password));
+
     userInfoRequest.userId = responseRegister.id;
-    await _userInformationService.post(userInfoRequest);
-
-    final responseLogin = await _authenticationService.signIn(
-      LoginRequestModel(
-        username: registerRequest.username,
-        password: registerRequest.password,
-      ),
-    );
-
-    // Optionally save to shared preferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', responseLogin.token);
-    await prefs.setString('userId', responseLogin.id.toString());
-    await prefs.setString('username', responseLogin.username);
+    final userInfo = await _userInformationService.post(userInfoRequest);
   }
 
   Future<void> login(LoginRequestModel loginRequest) async {
@@ -65,10 +64,6 @@ class AuthController {
     await prefs.setString('token', response.token);
     await prefs.setString('userId', response.id.toString());
     await prefs.setString('username', response.username);
-
-    debugPrint(
-      "User logged in: ${response.username} with token: ${response.token}",
-    );
   }
 
   Future<void> logout() async {

@@ -149,7 +149,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
-                    context.pushReplacement("/auth/register");
+                    context.push("/register");
                   },
                   child: SizedBox(
                     width: double.infinity,

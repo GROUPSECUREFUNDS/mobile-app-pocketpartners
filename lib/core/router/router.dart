@@ -7,20 +7,18 @@ import "package:mobile_app_pocketpartners/features/home/screens/home_screen.dart
 import "package:mobile_app_pocketpartners/shared/widgets/scaffold_base.dart";
 
 final router = GoRouter(
-  initialLocation: "/auth/login",
+  initialLocation: "/login",
   routes: [
-    GoRoute(
-      path: "/auth",
-      builder: (context, state) =>
-          Scaffold(body: Center(child: Text("Welcome to Pocket Partners!"))),
+    ShellRoute(
+      builder: (context, state, child) => child,
       routes: [
         GoRoute(
-          path: "register",
+          path: "/register",
           redirect: (context,state)=>RouteGuard.publicGuard(),
           builder: (context, state) => RegisterScreen(),
         ),
         GoRoute(
-          path: "login",
+          path: "/login",
           redirect: (context, state) => RouteGuard.publicGuard(),
           builder: (context, state) => LoginScreen()),
       ],
