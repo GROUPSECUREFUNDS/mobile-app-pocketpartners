@@ -1,6 +1,8 @@
 class UserinfoResponseModel {
   final int id;
-  final String fullName;
+  final String firstName;
+  final String lastName;
+
   final String phoneNumber;
   final String photo;
   final String email;
@@ -8,7 +10,8 @@ class UserinfoResponseModel {
 
   UserinfoResponseModel({
     required this.id,
-    required this.fullName,
+    required this.firstName,
+    required this.lastName,
     required this.phoneNumber,
     required this.photo,
     required this.email,
@@ -17,7 +20,8 @@ class UserinfoResponseModel {
   factory UserinfoResponseModel.fromJson(Map<String, dynamic> json) {
     return UserinfoResponseModel(
       id: json['id'],
-      fullName: json['fullName'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
       phoneNumber: json['phoneNumber'],
       photo: json['photo'],
       email: json['email'],
