@@ -23,7 +23,7 @@ class GroupResponseModel {
       groupPhoto: json['groupPhoto'],
       description: json['description'],
       adminId: json['adminId'],
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
     );
   }
 }

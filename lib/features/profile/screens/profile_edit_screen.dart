@@ -21,14 +21,20 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _uploadService = UploadService();
   final _imagePicker = ImagePicker();
 
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
 
   String? _imageUrl;
   bool _isLoading = false;
   bool _imageLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
 
   Future<void> _loadUserInfo() async {
     final user = await _authController.getUserFromPreferences();
@@ -71,9 +77,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         phoneNumber: phoneNumberController.text,
         photo: _imageUrl ?? '',
       );
-
+      print("🔁 Intentando actualizar: ${updatedInfo.toJson()}");
       try {
-        await _userInfoService.post(updatedInfo);
+        await _userInfoService.update(updatedInfo);
         if (mounted) Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -83,12 +89,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserInfo();
   }
 
   @override
@@ -106,12 +106,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   children: [
                     CircleAvatar(
                       radius: 70,
-                      backgroundImage:
-                      _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                      backgroundImage: _imageUrl != null ? NetworkImage(_imageUrl!) : null,
                       backgroundColor: Colors.grey[300],
-                      child: _imageLoading
-                          ? const CircularProgressIndicator()
-                          : null,
+                      child: _imageLoading ? const CircularProgressIndicator() : null,
                     ),
                     Positioned(
                       bottom: 0,
