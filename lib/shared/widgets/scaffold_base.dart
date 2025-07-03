@@ -143,7 +143,7 @@ class _State extends ConsumerState<ScaffoldBase> {
                 selected: currentPath == route.path,
                 onTap: () {
                   // Navigate to the selected route
-                  context.push(route.path);
+                  context.go(route.path);
                 },
               ),
             ),

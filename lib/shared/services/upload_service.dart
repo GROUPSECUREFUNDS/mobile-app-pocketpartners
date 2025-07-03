@@ -1,11 +1,7 @@
 import 'dart:io';
 import "package:flutter/material.dart";
 import 'package:cloudinary_url_gen/cloudinary.dart';
-import 'package:cloudinary_url_gen/transformation/transformation.dart';
 import 'package:cloudinary_api/uploader/cloudinary_uploader.dart';
-import 'package:cloudinary_api/src/request/model/uploader_params.dart';
-import 'package:cloudinary_url_gen/transformation/effect/effect.dart';
-import 'package:cloudinary_url_gen/transformation/resize/resize.dart';
 
 class UploadService {
    late Cloudinary cloudinary;
