@@ -65,33 +65,91 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
               final expense = expenses[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Expense: ${expense.name}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      decoration: const BoxDecoration(
+                        color: Colors.purple,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      Text('Created: ${_formatDate(expense.createdAt)}'),
-                      Text('Total Amount: \$${expense.amount.toStringAsFixed(2)}'),
-                      FutureBuilder<UserinfoResponseModel>(
-                        future: _getUserInfo(expense.userId),
-                        builder: (context, userSnapshot) {
-                          if (userSnapshot.connectionState == ConnectionState.waiting) {
-                            return const Text('Upload By: ...');
-                          }
-                          if (userSnapshot.hasError || userSnapshot.data == null) {
-                            return const Text('Upload By: Unknown');
-                          }
-                          return Text('Upload By: ${userSnapshot.data!.fullName}');
-                        },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Expense: ${expense.name}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Created: ${_formatDate(expense.createdAt)}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text('Due Date: ${_formatDate(expense.dueDate)}'),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Text('Total Amount: \$${expense.amount.toStringAsFixed(2)}'),
+                          FutureBuilder<UserinfoResponseModel>(
+                            future: _getUserInfo(expense.userId),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                return const Text('Upload By: ...');
+                              }
+                              if (userSnapshot.hasError || userSnapshot.data == null) {
+                                return const Text('Upload By: Unknown');
+                              }
+                              return Text('Upload By: ${userSnapshot.data!.fullName}');
+                            },
+                          ),
+                          Text('Due Date: ${_formatDate(expense.dueDate)}'),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: IconButton(
+                                    onPressed: null,
+                                    icon: const Icon(Icons.credit_card, color: Colors.blue),
+                                    tooltip: 'Pagar',
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: IconButton(
+                                    onPressed: null,
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    tooltip: 'Eliminar',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
