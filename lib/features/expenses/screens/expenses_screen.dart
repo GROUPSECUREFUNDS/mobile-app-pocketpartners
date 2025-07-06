@@ -3,8 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/models/user_info/userinfo_response_model.dart';
 import '../../../data/services/userinformation_service.dart';
-import '../models/expense_model.dart';
+import '../models/expense_entity.dart';
 import '../services/expenses_service.dart';
+import 'expense_form.dart';
 
 class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({Key? key}) : super(key: key);
@@ -56,103 +57,129 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final expenses = snapshot.data ?? [];
-          if (expenses.isEmpty) {
-            return const Center(child: Text('No expenses found.'));
-          }
-          return ListView.builder(
-            itemCount: expenses.length,
-            itemBuilder: (context, index) {
-              final expense = expenses[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      decoration: const BoxDecoration(
-                        color: Colors.purple,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Expense: ${expense.name}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Created: ${_formatDate(expense.createdAt)}',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          Text('Total Amount: \$${expense.amount.toStringAsFixed(2)}'),
-                          FutureBuilder<UserinfoResponseModel>(
-                            future: _getUserInfo(expense.userId),
-                            builder: (context, userSnapshot) {
-                              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                                return const Text('Upload By: ...');
-                              }
-                              if (userSnapshot.hasError || userSnapshot.data == null) {
-                                return const Text('Upload By: Unknown');
-                              }
-                              return Text('Upload By: ${userSnapshot.data!.fullName}');
-                            },
-                          ),
-                          Text('Due Date: ${_formatDate(expense.dueDate)}'),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: IconButton(
-                                    onPressed: null,
-                                    icon: const Icon(Icons.credit_card, color: Colors.blue),
-                                    tooltip: 'Pagar',
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: IconButton(
-                                    onPressed: null,
-                                    icon: const Icon(Icons.delete, color: Colors.red),
-                                    tooltip: 'Eliminar',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
+                      );
+                      if (result == true) {
+                        setState(() {}); // Refresca la lista si se creó un gasto
+                      }
+                    },
+                    child: const Text('+ New Expense'),
+                  ),
                 ),
-              );
-            },
+              ),
+              if (expenses.isEmpty)
+                const Expanded(
+                  child: Center(child: Text('No expenses found.')),
+                )
+              else
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: expenses.length,
+                    itemBuilder: (context, index) {
+                      final expense = expenses[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                              decoration: const BoxDecoration(
+                                color: Colors.purple,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Expense: ${expense.name}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Created: ${_formatDate(expense.createdAt)}',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8),
+                                  Text('Total Amount: \$${expense.amount.toStringAsFixed(2)}'),
+                                  FutureBuilder<UserinfoResponseModel>(
+                                    future: _getUserInfo(expense.userId),
+                                    builder: (context, userSnapshot) {
+                                      if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                        return const Text('Upload By: ...');
+                                      }
+                                      if (userSnapshot.hasError || userSnapshot.data == null) {
+                                        return const Text('Upload By: Unknown');
+                                      }
+                                      return Text('Upload By: ${userSnapshot.data!.fullName}');
+                                    },
+                                  ),
+                                  Text('Due Date: ${_formatDate(expense.dueDate)}'),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: IconButton(
+                                            onPressed: null,
+                                            icon: const Icon(Icons.credit_card, color: Colors.blue),
+                                            tooltip: 'Pagar',
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: IconButton(
+                                            onPressed: null,
+                                            icon: const Icon(Icons.delete, color: Colors.red),
+                                            tooltip: 'Eliminar',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
           );
         },
       ),
