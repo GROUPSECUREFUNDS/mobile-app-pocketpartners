@@ -141,7 +141,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                       if (userSnapshot.hasError || userSnapshot.data == null) {
                                         return const Text('Upload By: Unknown');
                                       }
-                                      return Text('Upload By: ${userSnapshot.data!.fullName}');
+                                      return Text('Upload By: ${userSnapshot.data!.firstName} ${userSnapshot.data!.lastName}');
                                     },
                                   ),
                                   Text('Due Date: ${_formatDate(expense.dueDate)}'),

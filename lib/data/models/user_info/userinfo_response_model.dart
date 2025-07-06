@@ -18,10 +18,15 @@ class UserinfoResponseModel {
   });
 
   factory UserinfoResponseModel.fromJson(Map<String, dynamic> json) {
+    final fullName = json['fullName']?.toString() ?? '';
+    final names = fullName.split(' ');
+    final firstName = names.isNotEmpty ? names.first : '';
+    final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
+
     return UserinfoResponseModel(
       id: json['id'] ?? 0,
-      firstName: json['firstName']?.toString() ?? '',
-      lastName: json['lastName']?.toString() ?? '',
+      firstName: json['firstName']?.toString() ?? firstName,
+      lastName: json['lastName']?.toString() ?? lastName,
       phoneNumber: json['phoneNumber']?.toString() ?? '',
       photo: json['photo']?.toString() ?? '',
       email: json['email']?.toString() ?? '',
