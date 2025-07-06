@@ -3,6 +3,7 @@ import "package:go_router/go_router.dart";
 import "package:mobile_app_pocketpartners/core/router/guards/route_guard.dart";
 import "package:mobile_app_pocketpartners/features/auth/screens/login_screen.dart";
 import "package:mobile_app_pocketpartners/features/auth/screens/register_screen.dart";
+import "package:mobile_app_pocketpartners/features/expenses/screens/expenses_screen.dart";
 import "package:mobile_app_pocketpartners/features/home/screens/home_screen.dart";
 import "package:mobile_app_pocketpartners/shared/widgets/scaffold_base.dart";
 
@@ -58,7 +59,7 @@ final router = GoRouter(
         GoRoute(
           path: "/expenses",
           redirect: (context, state) => RouteGuard.privateGuard(),
-          builder: (context, state) => HomeScreen(),
+          builder: (context, state) => ExpensesScreen(),
         ),
         GoRoute(
           path: "/incoming-payments",

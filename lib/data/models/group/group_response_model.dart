@@ -1,4 +1,4 @@
-
+// group_response_model.dart
 class GroupResponseModel {
   final int id;
   final String name;
@@ -16,6 +16,16 @@ class GroupResponseModel {
     required this.createdAt,
   });
 
+  static DateTime _parseDate(dynamic value) {
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    } else if (value is String) {
+      return DateTime.parse(value);
+    } else {
+      throw Exception('Formato de fecha no soportado: $value');
+    }
+  }
+
   factory GroupResponseModel.fromJson(Map<String, dynamic> json) {
     return GroupResponseModel(
       id: json['id'],
@@ -23,7 +33,7 @@ class GroupResponseModel {
       groupPhoto: json['groupPhoto'],
       description: json['description'],
       adminId: json['adminId'],
-      createdAt: DateTime.parse(json['createdAt'].toString()),
+      createdAt: _parseDate(json['createdAt']),
     );
   }
 }
