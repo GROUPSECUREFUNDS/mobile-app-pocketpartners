@@ -4,14 +4,14 @@ import 'package:mobile_app_pocketpartners/data/models/group/group_response_model
 import 'package:mobile_app_pocketpartners/data/services/group/group_service.dart';
 import 'package:mobile_app_pocketpartners/core/controllers/auth_controller.dart';
 
-class GroupListScreen extends StatefulWidget {
-  const GroupListScreen({super.key});
+class MyGroupsScreen extends StatefulWidget {
+  const MyGroupsScreen({super.key});
 
   @override
-  State<GroupListScreen> createState() => _GroupListScreenState();
+  State<MyGroupsScreen> createState() => _MyGroupsScreenState();
 }
 
-class _GroupListScreenState extends State<GroupListScreen> {
+class _MyGroupsScreenState extends State<MyGroupsScreen> {
   final GroupService groupService = GroupService();
   final AuthController authController = AuthController();
 
@@ -86,14 +86,6 @@ class _GroupListScreenState extends State<GroupListScreen> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/groups/create').then((created) {
-            if (created == true) loadGroups();
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

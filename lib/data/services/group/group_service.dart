@@ -5,7 +5,7 @@ import 'package:mobile_app_pocketpartners/data/models/group/group_response_model
 import 'package:mobile_app_pocketpartners/data/services/base_service.dart';
 
 class GroupService extends BaseService {
-  GroupService() : super(resourcePath: "/groups");
+  GroupService() : super(resourcePath: "groups");
 
   Future<dynamic> createGroup(GroupRequestModel group) async {
     final headers = await getHeaders();

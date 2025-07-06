@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:mobile_app_pocketpartners/data/models/group/group_response_model.dart';
+import 'package:mobile_app_pocketpartners/data/models/group/group_member_response_model.dart';
 import 'package:mobile_app_pocketpartners/data/services/base_service.dart';
 
 class GroupMembersService extends BaseService {
-  GroupMembersService() : super(resourcePath: "/groups");
+  GroupMembersService() : super(resourcePath: "groups");
 
   /// Obtener miembros de un grupo
-  /*Future<List<MemberInfo>> getGroupMembers(int groupId) async {
+  Future<List<GroupMemberResponseModel>> getGroupMembers(int groupId) async {
     final headers = await getHeaders();
     final response = await client.get(
       Uri.parse("${getFullUrl()}/$groupId/members"),
@@ -15,11 +15,13 @@ class GroupMembersService extends BaseService {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList.map((json) => MemberInfo.fromJson(json)).toList();
+      return jsonList
+          .map((json) => GroupMemberResponseModel.fromJson(json))
+          .toList();
     } else {
       throw Exception("Error al obtener miembros del grupo");
     }
-  }*/
+  }
 
   /// Añadir miembro a un grupo
   Future<void> addGroupMember(int groupId, int memberId) async {
