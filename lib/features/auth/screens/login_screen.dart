@@ -12,7 +12,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  
   final authController = AuthController();
 
   final _formKey = GlobalKey<FormState>();

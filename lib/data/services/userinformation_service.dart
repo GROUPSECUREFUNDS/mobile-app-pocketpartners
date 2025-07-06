@@ -22,6 +22,21 @@ class UserinformationService extends BaseService{
     }
   }
 
+  Future<UserinfoResponseModel> update(UserinfoRequestModel userInfo) async {
+    final headers = await getHeaders();
+    final response = await client.put(
+      Uri.parse("${getFullUrl()}/${userInfo.userId}"), // <- userId en URL
+      headers: headers,
+      body: jsonEncode(userInfo.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return UserinfoResponseModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception("Failed to update user information: ${response.body}");
+    }
+  }
+
   Future<UserinfoResponseModel> getByUserId(int userId) async {
     final headers = await getHeaders();
     final response = await client.get(

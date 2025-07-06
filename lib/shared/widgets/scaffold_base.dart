@@ -123,7 +123,7 @@ class _State extends ConsumerState<ScaffoldBase> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          userInfo?.fullName ?? "Guest User",
+                          userInfo?.firstName ?? "Guest User",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
