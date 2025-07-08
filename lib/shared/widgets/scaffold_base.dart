@@ -123,7 +123,7 @@ class _State extends ConsumerState<ScaffoldBase> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          userInfo?.fullName ?? "Guest User",
+                          userInfo?.firstName ?? "Guest User",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -143,7 +143,7 @@ class _State extends ConsumerState<ScaffoldBase> {
                 selected: currentPath == route.path,
                 onTap: () {
                   // Navigate to the selected route
-                  context.push(route.path);
+                  context.go(route.path);
                 },
               ),
             ),

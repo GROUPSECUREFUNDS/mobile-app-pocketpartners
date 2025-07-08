@@ -4,7 +4,6 @@ class GroupResponseModel {
   final String description;
   final String groupPhoto;
   final DateTime createdAt;
-  //final DateTime updatedAt;
   final int adminId;
 
   GroupResponseModel({
@@ -13,7 +12,6 @@ class GroupResponseModel {
     required this.description,
     required this.groupPhoto,
     required this.createdAt,
-    //required this.updatedAt,
     required this.adminId,
   });
 
