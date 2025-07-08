@@ -215,4 +215,30 @@ class PaymentService extends BaseService {
       throw Exception("Failed OCR (${response.statusCode})");
     }
   }
+
+/// SERVICIOS PARA EL PAYMENT-TODO-PAGE
+  Future<void> makePayment(int paymentId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null) {
+      throw Exception("No token found");
+    }
+
+    final url = Uri.parse("${getFullUrl()}/$paymentId/completed");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error making payment: ${response.statusCode} ${response.body}");
+    }
+  }
+
+
 }

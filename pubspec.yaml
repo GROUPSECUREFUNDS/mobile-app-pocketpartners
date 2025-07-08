@@ -19,6 +19,7 @@ dependencies:
   cloudinary_api: ^1.0.0
   fl_chart: ^0.64.0
 
+
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:

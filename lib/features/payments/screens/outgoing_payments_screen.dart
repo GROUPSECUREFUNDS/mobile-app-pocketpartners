@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app_pocketpartners/features/payments/screens/payments_todo_page.dart';
 import 'package:mobile_app_pocketpartners/features/payments/services/payment_service.dart';
 import 'package:mobile_app_pocketpartners/core/controllers/auth_controller.dart';
 import 'package:mobile_app_pocketpartners/features/payments/screens/payments_made_page.dart';
@@ -85,7 +86,7 @@ class _OutgoingPaymentsScreenState extends State<OutgoingPaymentsScreen> with Si
         controller: _tabController,
         children: [
           PaymentsMadePage(),
-          buildPaymentList(paymentsToDo),
+          PaymentsTodoPage(),
         ],
       ),
     );
