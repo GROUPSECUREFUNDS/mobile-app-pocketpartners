@@ -5,16 +5,25 @@ import "package:shared_preferences/shared_preferences.dart";
 
 class BaseService {
   final String baseUrl = "https://backend-pocketpartners.onrender.com/api/v1";
+  final String baseUrlimage = "https://backend-pocketpartners.onrender.com/api/v1/images";
+  final String baseUrlocr = "https://backend-pocketpartners.onrender.com/api/v1/ocr-receipt";
+
   //final String baseUrl = "https://8wgtg5zw-8080.brs.devtunnels.ms/api/v1";
   final String resourcePath;
 
   static final http.Client _sharedClient = http.Client();
 
   BaseService({required this.resourcePath});
-
+  /// 🔑 Obtiene headers con token de autorización
   Future<Map<String, String>> getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      throw Exception("Token de autenticación no encontrado. Realiza login nuevamente.");
+    }
+
+    print("🔑 Token usado en headers: $token");
 
     return {
       "Content-Type": "application/json",
@@ -103,6 +112,29 @@ class BaseService {
       throw Exception('Failed to delete item ($id) (${response.statusCode})');
     }
   }
+  Future<dynamic> postJson(String url, Map<String, dynamic> body) async {
+    final response = await client.post(
+      Uri.parse(url),
+      headers: await getHeaders(),
+      body: jsonEncode(body),
+    );
 
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to POST to $url (${response.statusCode})');
+    }
+  }
+
+  Future<void> deleteJson(String url) async {
+    final response = await client.delete(
+      Uri.parse(url),
+      headers: await getHeaders(),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to DELETE $url (${response.statusCode})');
+    }
+  }
 
 }

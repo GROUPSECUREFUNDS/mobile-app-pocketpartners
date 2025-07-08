@@ -4,11 +4,7 @@ class GroupEntity {
   String groupPhoto;
   String description;
   int adminId;
-  bool isMember;
   DateTime createdAt;
-  List<Member> members;
-  List<HistoryEntry> expenseHistory;
-  List<HistoryEntry> paymentHistory;
 
   GroupEntity({
     this.id = 0,
@@ -16,15 +12,8 @@ class GroupEntity {
     this.groupPhoto = '',
     this.description = '',
     this.adminId = 0,
-    this.isMember = false,
     DateTime? createdAt,
-    List<Member>? members,
-    List<HistoryEntry>? expenseHistory,
-    List<HistoryEntry>? paymentHistory,
-  })  : createdAt = createdAt ?? DateTime.now(),
-        members = members ?? [],
-        expenseHistory = expenseHistory ?? [],
-        paymentHistory = paymentHistory ?? [];
+  })  : createdAt = createdAt ?? DateTime.now();
 
   factory GroupEntity.fromJson(Map<String, dynamic> json) {
     return GroupEntity(
@@ -33,17 +22,8 @@ class GroupEntity {
       groupPhoto: json['groupPhoto'] ?? '',
       description: json['description'] ?? '',
       adminId: json['adminId'] ?? 0,
-      isMember: json['isMember'] ?? false,
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-      members: (json['members'] as List<dynamic>? ?? [])
-          .map((e) => Member.fromJson(e))
-          .toList(),
-      expenseHistory: (json['expenseHistory'] as List<dynamic>? ?? [])
-          .map((e) => HistoryEntry.fromJson(e))
-          .toList(),
-      paymentHistory: (json['paymentHistory'] as List<dynamic>? ?? [])
-          .map((e) => HistoryEntry.fromJson(e))
-          .toList(),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int),
+
     );
   }
 
@@ -54,11 +34,8 @@ class GroupEntity {
       'groupPhoto': groupPhoto,
       'description': description,
       'adminId': adminId,
-      'isMember': isMember,
       'createdAt': createdAt.toIso8601String(),
-      'members': members.map((e) => e.toJson()).toList(),
-      'expenseHistory': expenseHistory.map((e) => e.toJson()).toList(),
-      'paymentHistory': paymentHistory.map((e) => e.toJson()).toList(),
+
     };
   }
 }

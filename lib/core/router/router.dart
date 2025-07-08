@@ -57,6 +57,11 @@ final router = GoRouter(
           builder: (context, state) => HomeScreen(),
         ),
         GoRoute(
+          path: "/contacts",
+          redirect: (context, state) => RouteGuard.privateGuard(),
+          builder: (context, state) => HomeScreen(),
+        ),
+        GoRoute(
           path: "/incoming-payments",
           redirect: (context, state) => RouteGuard.privateGuard(),
           builder: (context, state) => IncomingPaymentsScreen(),

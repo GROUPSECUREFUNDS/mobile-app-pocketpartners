@@ -26,11 +26,15 @@ class ExpensesEntity {
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       amount: (json['amount'] ?? 0).toDouble(),
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+        createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int),
+        updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int),
       userId: json['userId'] ?? 0,
       groupId: json['groupId'] ?? 0,
-      dueDate: DateTime.tryParse(json['dueDate'] ?? '') ?? DateTime.now(),
+      dueDate: DateTime(
+          json['dueDate'][0] as int,
+          json['dueDate'][1] as int,
+          json['dueDate'][2] as int
+      ),
     );
   }
 

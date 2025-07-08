@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/payment_model.dart';
-import 'package:mobile_app_pocketpartners/features/payments/models/payment_model.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/expense_entity.dart';
-import 'package:mobile_app_pocketpartners/features/payments/models/contact_entity.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/group_entity.dart';
+import 'package:mobile_app_pocketpartners/features/payments/screens/payment_details_page.dart';
 
 class PaymentCard extends StatelessWidget {
   final PaymentModel payment;
   final ExpensesEntity expense;
+  final GroupEntity groupdata;
+
 
   const PaymentCard({
     Key? key,
     required this.payment,
     required this.expense,
+    required this.groupdata,
+
+
   }) : super(key: key);
 
   @override
@@ -24,13 +28,24 @@ class PaymentCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Due Date: ${expense.dueDate.toIso8601String()}"),
+            Text("Due Date: ${expense.dueDate}"),
             Text("Expense: ${expense.name}"),
+            Text("Group Name: ${groupdata.name}"),
+
           ],
         ),
         trailing: ElevatedButton(
           onPressed: () {
-            // TODO: acción para ver receipts
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PaymentDetailsPage(
+                  payment: payment,
+                  expense: expense,
+                  groupdata: groupdata,
+                ),
+              ),
+            );
           },
           child: const Text("See Receipts"),
         ),

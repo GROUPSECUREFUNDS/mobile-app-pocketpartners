@@ -4,8 +4,8 @@ import 'package:mobile_app_pocketpartners/core/controllers/auth_controller.dart'
 import 'package:mobile_app_pocketpartners/features/payments/screens/payment_card.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/payment_model.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/expense_entity.dart';
-import 'package:mobile_app_pocketpartners/features/payments/models/contact_entity.dart';
 import 'package:mobile_app_pocketpartners/features/payments/models/group_entity.dart';
+
 
 class PaymentsMadePage extends StatefulWidget {
   const PaymentsMadePage({Key? key}) : super(key: key);
@@ -20,15 +20,11 @@ class _PaymentsMadePageState extends State<PaymentsMadePage> {
 
   List<Map<String, dynamic>> payments = [];
   bool loading = true;
-  ExpensesEntity? expense ;
 
   @override
   void initState() {
     super.initState();
-    fetchPayments();
-    paymentService.getExpenseById(1).then((valor){setState(() {
-      expense=valor;
-    });});
+   fetchPayments();
   }
 
   Future<void> fetchPayments() async {
@@ -42,10 +38,16 @@ class _PaymentsMadePageState extends State<PaymentsMadePage> {
         for (var payment in paymentsData) {
 
           final expense = await paymentService.getExpenseById(payment.expenseId);
+          final groupdata = await paymentService.getGroupById(expense.groupId);
+          ///final groupmembers = await paymentService.getGroupMembers(expense.groupId);
+         /// final member = await paymentService.getContactById(groupdata.adminId);
 
           enrichedPayments.add({
             'payment': payment,
             'expense': expense,
+            'groupdata':groupdata,
+
+
           });
         }
 
@@ -78,22 +80,18 @@ class _PaymentsMadePageState extends State<PaymentsMadePage> {
       return const Center(child: Text("No payments made"));
     }
 
-    /*return ListView.builder(
+    return ListView.builder(
       itemCount: payments.length,
       itemBuilder: (context, index) {
         final item = payments[index];
         return PaymentCard(
           payment: item['payment'] as PaymentModel,
           expense: item['expense'] as ExpensesEntity,
+          groupdata: item['groupdata'] as GroupEntity,
+
          /// contact: item['contact'] as ContactEntity,
         );
       },
-    );*/
-    return PaymentCard(payment:payments[0]['payment'] as PaymentModel , expense: expense!);
-  }
-
-  Widget expensess(BuildContext context){
-
-    return PaymentCard(payment:payments[0]['payment'] as PaymentModel , expense: expense!);
+    );
   }
 }
