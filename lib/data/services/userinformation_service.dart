@@ -22,7 +22,7 @@ class UserinformationService extends BaseService{
     }
   }
 
-  Future<UserinfoResponseModel> update(UserinfoRequestModel userInfo) async {
+  Future<UserinfoResponseModel> updateUserInfo(UserinfoRequestModel userInfo) async {
     final headers = await getHeaders();
     final response = await client.put(
       Uri.parse("${getFullUrl()}/${userInfo.userId}"), // <- userId en URL

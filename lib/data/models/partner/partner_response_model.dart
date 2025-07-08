@@ -1,4 +1,3 @@
-
 class PartnerResponseModel {
   final int id;
   final String fullName;

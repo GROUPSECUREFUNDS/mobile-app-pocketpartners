@@ -79,7 +79,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       );
       print("🔁 Intentando actualizar: ${updatedInfo.toJson()}");
       try {
-        await _userInfoService.update(updatedInfo);
+        await _userInfoService.updateUserInfo(updatedInfo);
         if (mounted) Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

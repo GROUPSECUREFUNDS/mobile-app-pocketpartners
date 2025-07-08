@@ -1,39 +1,39 @@
-// group_response_model.dart
 class GroupResponseModel {
   final int id;
   final String name;
-  final String groupPhoto;
   final String description;
-  final int adminId;
+  final String groupPhoto;
   final DateTime createdAt;
+  final int adminId;
 
   GroupResponseModel({
     required this.id,
     required this.name,
-    required this.groupPhoto,
     required this.description,
-    required this.adminId,
+    required this.groupPhoto,
     required this.createdAt,
+    required this.adminId,
   });
-
-  static DateTime _parseDate(dynamic value) {
-    if (value is int) {
-      return DateTime.fromMillisecondsSinceEpoch(value);
-    } else if (value is String) {
-      return DateTime.parse(value);
-    } else {
-      throw Exception('Formato de fecha no soportado: $value');
-    }
-  }
 
   factory GroupResponseModel.fromJson(Map<String, dynamic> json) {
     return GroupResponseModel(
-      id: json['id'],
-      name: json['name'],
-      groupPhoto: json['groupPhoto'],
-      description: json['description'],
-      adminId: json['adminId'],
+      id: json['id'] ?? 0,
+      name: json['name']?.toString() ?? '',
+      groupPhoto: json['groupPhoto']?.toString() ?? 'https://via.placeholder.com/150',
+      description: json['description']?.toString() ?? '',
+      adminId: json['adminId'] ?? 0,
       createdAt: _parseDate(json['createdAt']),
     );
+  }
+  static DateTime _parseDate(dynamic value) {
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (_) {
+        return DateTime(2000); // Valor por defecto si no se puede parsear
+      }
+    } else {
+      return DateTime(2000);
+    }
   }
 }
