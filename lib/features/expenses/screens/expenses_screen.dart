@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app_pocketpartners/features/expenses/screens/payment_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/models/user_info/userinfo_response_model.dart';
 import '../../../data/services/userinformation_service.dart';
@@ -152,7 +153,13 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                         child: Align(
                                           alignment: Alignment.centerLeft,
                                           child: IconButton(
-                                            onPressed: null,
+                                            onPressed: () async {
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const PaymentFormScreen()),
+                                              );
+                                              // Si quieres refrescar la lista tras un pago, puedes llamar a setState aquí si es necesario
+                                            },
                                             icon: const Icon(Icons.credit_card, color: Colors.blue),
                                             tooltip: 'Pagar',
                                           ),
