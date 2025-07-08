@@ -141,4 +141,21 @@ class BaseService {
     }
   }
 
+  /// 🔷 PUT
+  Future<dynamic> putJson(String url, dynamic body) async {
+    final response = await client.put(
+      Uri.parse(url),
+      headers: await getHeaders(),
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Error in PUT ($url): ${response.statusCode} ${response.body}");
+      throw Exception('Failed to PUT to $url (${response.statusCode})');
+    }
+  }
+
+
 }
