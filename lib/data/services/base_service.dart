@@ -88,21 +88,7 @@ class BaseService {
     }
   }
 
-  /// 🔷 UPDATE
-  Future<dynamic> update(dynamic id, dynamic item) async {
-    final url = "${getFullUrl()}/$id";
-    final response = await client.put(
-      Uri.parse(url),
-      headers: await getHeaders(),
-      body: jsonEncode(item),
-    );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to update item ($id) (${response.statusCode})');
-    }
-  }
 
   /// 🔷 DELETE
   Future<void> delete(dynamic id) async {
