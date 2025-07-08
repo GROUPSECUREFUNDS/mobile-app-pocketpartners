@@ -81,7 +81,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                   title: Text(group.name),
                   subtitle: Text(group.description),
                   onTap: () {
-                    //context.push('/groups/${group.id}');
+                    context.push('/groups/${group.id}');
                   },
                 );
               },

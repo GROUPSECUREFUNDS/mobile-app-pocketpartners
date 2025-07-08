@@ -42,7 +42,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
         return;
       }
 
-      final fetchedGroups = await groupService.getAllGroupsByUserId(user.id);
+      final fetchedGroups = await groupService.getAllGroups();
 
       setState(() {
         groups = fetchedGroups;
@@ -59,7 +59,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mis Grupos")),
+      appBar: AppBar(title: const Text("Grupos")),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
@@ -81,7 +81,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                   title: Text(group.name),
                   subtitle: Text(group.description),
                   onTap: () {
-                    //context.push('/groups/${group.id}');
+                    context.push('/groups/${group.id}');
                   },
                 );
               },

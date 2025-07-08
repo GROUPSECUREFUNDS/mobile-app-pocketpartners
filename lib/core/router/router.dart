@@ -7,10 +7,8 @@ import 'package:mobile_app_pocketpartners/features/home/screens/home_screen.dart
 import 'package:mobile_app_pocketpartners/shared/widgets/scaffold_base.dart';
 import 'package:mobile_app_pocketpartners/features/groups/screens/group_list_screen.dart';
 import 'package:mobile_app_pocketpartners/features/groups/screens/group_create_screen.dart';
-/*import 'package:mobile_app_pocketpartners/features/groups/screens/group_detail_screen.dart';
-import 'package:mobile_app_pocketpartners/features/groups/screens/group_config_screen.dart';
-import 'package:mobile_app_pocketpartners/features/groups/screens/group_expenses_details_screen.dart';
-*/
+import 'package:mobile_app_pocketpartners/features/groups/screens/group_detail_screen.dart';
+
 final router = GoRouter(
   initialLocation: "/login",
   routes: [
@@ -55,9 +53,19 @@ final router = GoRouter(
           builder: (context, state) => CreateGroupScreen(),
         ),
         GoRoute(
-        path: "/my-groups", 
-        redirect: (context, state) => RouteGuard.privateGuard(),
-        builder: (context, state) => MyGroupsScreen(),
+          path: '/groups/:id',
+          name: 'group-details',
+          redirect: (context, state) => RouteGuard.privateGuard(),
+          builder: (context, state) {
+            final groupId = int.parse(state.pathParameters['id']!);
+            return GroupDetailsScreen(groupId: groupId);
+          },
+        ),
+
+        GoRoute(
+          path: "/my-groups",
+          redirect: (context, state) => RouteGuard.privateGuard(),
+          builder: (context, state) => MyGroupsScreen(),
         ),
         GoRoute(
           path: "/expenses",
