@@ -1,10 +1,11 @@
-import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:mobile_app_pocketpartners/core/router/guards/route_guard.dart";
 import "package:mobile_app_pocketpartners/features/auth/screens/login_screen.dart";
 import "package:mobile_app_pocketpartners/features/auth/screens/register_screen.dart";
 import "package:mobile_app_pocketpartners/features/expenses/screens/expenses_screen.dart";
 import "package:mobile_app_pocketpartners/features/home/screens/home_screen.dart";
+import "package:mobile_app_pocketpartners/features/payments/screens/incoming_payments_screen.dart";
+import "package:mobile_app_pocketpartners/features/payments/screens/outgoing_payments_screen.dart";
 import "package:mobile_app_pocketpartners/shared/widgets/scaffold_base.dart";
 
 import "../../features/profile/screens/profile_edit_screen.dart";
@@ -28,6 +29,10 @@ final router = GoRouter(
           builder: (context, state) => LoginScreen()),
       ],
     ),
+
+
+
+    
     ShellRoute(
       builder: (context, state, child) => ScaffoldBase(body: child),
       routes: [
@@ -62,14 +67,19 @@ final router = GoRouter(
           builder: (context, state) => ExpensesScreen(),
         ),
         GoRoute(
-          path: "/incoming-payments",
+          path: "/contacts",
           redirect: (context, state) => RouteGuard.privateGuard(),
           builder: (context, state) => HomeScreen(),
         ),
         GoRoute(
+          path: "/incoming-payments",
+          redirect: (context, state) => RouteGuard.privateGuard(),
+          builder: (context, state) => IncomingPaymentsScreen(),
+        ),
+        GoRoute(
           path: "/outgoing-payments",
           redirect: (context, state) => RouteGuard.privateGuard(),
-          builder: (context, state) => HomeScreen(),
+          builder: (context, state) => OutgoingPaymentsScreen(),
         ),
       ],
     ),
