@@ -5,10 +5,14 @@ import "package:shared_preferences/shared_preferences.dart";
 
 class BaseService {
   final String baseUrl = "https://backend-pocketpartners.onrender.com/api/v1";
+
   final String baseUrlimage = "https://backend-pocketpartners.onrender.com/api/v1/images";
   final String baseUrlocr = "https://backend-pocketpartners.onrender.com/api/v1/ocr-receipt";
 
   //final String baseUrl = "https://8wgtg5zw-8080.brs.devtunnels.ms/api/v1";
+
+  //final String baseUrl = "http://10.0.2.2:8080/api/v1";
+
   final String resourcePath;
 
   static final http.Client _sharedClient = http.Client();
