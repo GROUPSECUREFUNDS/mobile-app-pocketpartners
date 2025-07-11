@@ -68,7 +68,6 @@ class _State extends ConsumerState<ScaffoldBase> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Pocket Partners"),
         actions: [
           IconButton(
             icon: Icon(

@@ -34,13 +34,19 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
   late TextEditingController nameController;
   late TextEditingController receiptNumberController;
   late TextEditingController amountController;
+  late TextEditingController issueDateController;
 
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController(text: name);
     receiptNumberController = TextEditingController(text: receiptNumber);
-    amountController = TextEditingController(text: amount != 0 ? amount.toString() : '');
+    amountController = TextEditingController(
+      text: amount != 0 ? amount.toString() : '',
+    );
+    issueDateController = TextEditingController(
+      text: "${issueDate.toLocal()}".split(' ')[0],
+    );
   }
 
   @override
@@ -48,12 +54,21 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
     nameController.dispose();
     receiptNumberController.dispose();
     amountController.dispose();
+    issueDateController.dispose();
     super.dispose();
   }
 
-  Future<void> pickImage() async {
+  Future<void> pickImageFromGallery() async {
+    await _pickImage(ImageSource.gallery);
+  }
+
+  Future<void> pickImageFromCamera() async {
+    await _pickImage(ImageSource.camera);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() => imageUploading = true);
@@ -61,7 +76,10 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
       final token = prefs.getString("token") ?? "";
 
       try {
-        final uploadedImageId = await receiptService.uploadImage(File(pickedFile.path), token);
+        final uploadedImageId = await receiptService.uploadImage(
+          File(pickedFile.path),
+          token,
+        );
         setState(() {
           imageFile = File(pickedFile.path);
           imageId = uploadedImageId;
@@ -83,20 +101,18 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
       final ocrData = await receiptService.extractFieldsFromImage(imageId!);
 
       setState(() {
-        // Actualizar variables con resultados del OCR
         name = ocrData['name'] ?? name;
         receiptNumber = ocrData['receiptNumber'] ?? receiptNumber;
         amount = (ocrData['amount'] as num?)?.toDouble() ?? amount;
 
-        // Actualizar controllers para reflejar en los TextFormField
         nameController.text = name;
         receiptNumberController.text = receiptNumber;
         amountController.text = amount != 0 ? amount.toString() : '';
 
-        // Actualizar issueDate si viene en el OCR
         if (ocrData['issueDate'] != null) {
           List<dynamic> dateArray = ocrData['issueDate'];
           issueDate = DateTime(dateArray[0], dateArray[1], dateArray[2]);
+          issueDateController.text = "${issueDate.toLocal()}".split(' ')[0];
         }
       });
     } catch (e) {
@@ -112,7 +128,9 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
       setState(() => loading = true);
 
       try {
-        debugPrint("Data: $name + $receiptNumber + $amount + $issueDate + $imageId");
+        debugPrint(
+          "Data: $name + $receiptNumber + $amount + $issueDate + $imageId",
+        );
         await receiptService.createReceiptByPayment({
           "name": name,
           "receiptNumber": receiptNumber,
@@ -134,77 +152,145 @@ class _AddReceiptDialogState extends State<AddReceiptDialog> {
     return AlertDialog(
       title: const Text("Deseas agregar comprobantes de pago?"),
       content: loading
-          ? const CircularProgressIndicator()
+          ? Center(
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: CircularProgressIndicator(
+                  color: Theme.of(
+                    context,
+                  ).primaryColor, // O usa el color que prefieras
+                  strokeWidth: 3,
+                ),
+              ),
+            )
           : SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                  "Si deseas agregar comprobantes de pago, puedes hacerlo a continuación. Si no, puedes cerrar este diálogo."),
-              TextFormField(
-                decoration:
-                const InputDecoration(labelText: "Nombre del comprobante"),
-                controller: nameController,
-                onSaved: (value) => name = value ?? '',
-                validator: (value) => value!.isEmpty ? "Requerido" : null,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Si deseas agregar comprobantes de pago, puedes hacerlo a continuación. Si no, puedes cerrar este diálogo.",
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: "Nombre del comprobante",
+                      ),
+                      controller: nameController,
+                      onSaved: (value) => name = value ?? '',
+                      validator: (value) => value!.isEmpty ? "Requerido" : null,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: "Número de comprobante",
+                      ),
+                      controller: receiptNumberController,
+                      onSaved: (value) => receiptNumber = value ?? '',
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: "Monto del comprobante",
+                      ),
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) =>
+                          amount = double.tryParse(value ?? '0') ?? 0,
+                      validator: (value) => value!.isEmpty ? "Requerido" : null,
+                    ),
+                    TextFormField(
+                      controller: issueDateController,
+                      decoration: const InputDecoration(
+                        labelText: "Fecha de emisión",
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      readOnly: true,
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: issueDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            issueDate = picked;
+                            issueDateController.text = "${picked.toLocal()}"
+                                .split(' ')[0];
+                          });
+                        }
+                      },
+                      validator: (value) => value!.isEmpty ? "Requerido" : null,
+                      onSaved: (value) {
+                        // issueDate ya se guarda en el objeto
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    if (imageUploading)
+                      const CircularProgressIndicator()
+                    else if (imageFile != null)
+                      Image.file(imageFile!, height: 100),
+
+                    /// Aquí reemplazamos el botón único por los dos
+                    if (!imageUploading)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.photo_library),
+                              label: const Text("Galería"),
+                              onPressed: imageUploading
+                                  ? null
+                                  : pickImageFromGallery,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.camera_alt),
+                              label: const Text("Cámara"),
+                              onPressed: imageUploading
+                                  ? null
+                                  : pickImageFromCamera,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                    if (imageId != null)
+                      ElevatedButton.icon(
+                        icon: ocrLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.document_scanner),
+                        label: ocrLoading
+                            ? const Text("Procesando...")
+                            : const Text("OCR"),
+                        onPressed: ocrLoading ? null : extractOCR,
+                      ),
+                  ],
+                ),
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: "Número de comprobante"),
-                controller: receiptNumberController,
-                onSaved: (value) => receiptNumber = value ?? '',
-              ),
-              TextFormField(
-                decoration:
-                const InputDecoration(labelText: "Monto del comprobante"),
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                onSaved: (value) =>
-                amount = double.tryParse(value ?? '0') ?? 0,
-                validator: (value) => value!.isEmpty ? "Requerido" : null,
+            ),
+      actions: loading
+          ? [] // 👈 Evita mostrar los botones cuando está cargando
+          : [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cerrar"),
               ),
               ElevatedButton(
-                onPressed: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: issueDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null)
-                    setState(() => issueDate = picked);
-                },
-                child: Text("Fecha: ${issueDate.toLocal()}".split(' ')[0]),
+                onPressed: addReceipt,
+                child: const Text("Agregar Comprobante"),
               ),
-              const SizedBox(height: 16),
-              if (imageUploading)
-                const CircularProgressIndicator()
-              else if (imageFile != null)
-                Image.file(imageFile!, height: 100),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.upload),
-                label: const Text("Agregar foto del recibo"),
-                onPressed: pickImage,
-              ),
-              if (imageId != null)
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.document_scanner),
-                  label: const Text("OCR"),
-                  onPressed: ocrLoading ? null : extractOCR,
-                ),
             ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cerrar")),
-        ElevatedButton(
-            onPressed: addReceipt, child: const Text("Agregar Comprobante")),
-      ],
     );
   }
 }

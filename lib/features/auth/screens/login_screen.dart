@@ -22,143 +22,166 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/PPLogo.png"),
-                      fit: BoxFit.cover,
-                    ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF7B2FF7), Color(0xFF9F44D3)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
+                  // Logo
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: AssetImage("assets/images/PPLogo.png"),
+                    backgroundColor: Colors.transparent,
                   ),
-                ),
-                const SizedBox(height: 30),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: "Username"),
-                  controller: _usernameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Por favor ingresa tu nombre de usuario";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: "Password",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _hidePassword ? Icons.visibility : Icons.visibility_off,
+                  const SizedBox(height: 30),
+                  // Card con formulario
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Form(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person),
+                                labelText: "Usuario",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              controller: _usernameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Por favor ingresa tu nombre de usuario";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock),
+                                labelText: "Contraseña",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _hidePassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _hidePassword = !_hidePassword;
+                                    });
+                                  },
+                                ),
+                              ),
+                              obscureText: _hidePassword,
+                              controller: _passwordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Por favor ingresa tu contraseña";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  // Aquí iría lógica de "olvide contraseña"
+                                },
+                                child: const Text(
+                                  "¿Olvidaste tu contraseña?",
+                                  style: TextStyle(color: Colors.purpleAccent),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.purpleAccent,
+                                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: _isLoading
+                                    ? null
+                                    : () async {
+                                  if (_formKey.currentState?.validate() ?? false) {
+                                    setState(() => _isLoading = true);
+                                    try {
+                                      await authController.login(
+                                        LoginRequestModel(
+                                          username: _usernameController.text,
+                                          password: _passwordController.text,
+                                        ),
+                                      );
+                                      context.go("/home");
+                                    } catch (e) {
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text("Error: $e")),
+                                        );
+                                      }
+                                    } finally {
+                                      if (mounted) {
+                                        setState(() => _isLoading = false);
+                                      }
+                                    }
+                                  }
+                                },
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    : const Text(
+                                  "Iniciar sesión",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      onPressed: (){
-                        setState(() {
-                          _hidePassword=!_hidePassword;
-                        });
-                      },
-                    ),                    ),
-                  obscureText: _hidePassword,
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Por favor ingresa tu contraseña";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    // Navigate to sign up screen
-                  },
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: const Text(
-                      "¿Olvidaste tu contraseña?",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: Colors.purpleAccent),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.purpleAccent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  ),
-                  onPressed: () async {
-                    // Handle login logic
-                    if (_formKey.currentState?.validate() ?? false) {
-                      setState(() {
-                        _isLoading = true; // Show loading state
-                      });
-                      // If the form is valid, proceed with login
-                      try {
-                        // Attempt to login using the auth provider
-                        //show dialog while logging in
-                        await authController.login(
-                          LoginRequestModel(
-                            username: _usernameController.text,
-                            password: _passwordController.text,
-                          )
-                        );
-                        // If login is successful, navigate to home screen
-                        context.go("/home");
-                      } catch (e) {
-                        // Handle any errors that occur during login
-                        if (mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text("Error: $e")));
-                        }
-                      } finally {
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false; // Hide loading state
-                          });
-                        }
-
-                      }
-                    }
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: _isLoading
-                        ? CircularProgressIndicator()
-                        : const Text("Iniciar sesión"),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    context.push("/register");
-                  },
-                  child: SizedBox(
-                    width: double.infinity,
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      context.push("/register");
+                    },
                     child: const Text(
                       "¿Aún no tienes una cuenta? Regístrate aquí",
-                      textAlign: TextAlign.end,
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
